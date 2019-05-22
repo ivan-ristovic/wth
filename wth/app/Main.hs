@@ -19,7 +19,7 @@ background = white
 drawing :: DynamicImage -> Float -> Picture
 drawing img _ = case fromDynamicImage img of 
     Nothing  -> Blank
-    Just pngMap -> pictures [pngMap, (png bgMapPath)]
+    Just pngMap -> pictures [(png bgMapPath), pngMap]
 
 main :: IO ()
 main = do

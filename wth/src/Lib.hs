@@ -1,4 +1,4 @@
-module Lib ( formApiUrl, downloadMap, defaultSavePath ) where
+module Lib ( formApiUrl, downloadMap, bgMapPath ) where
 
 import qualified Data.ByteString as BStr
 import Network.Curl.Download
@@ -29,15 +29,13 @@ formApiQuery layer zoom tilex tiley params = do
     return (baseUrl ++ layer ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ "/?appid=" ++ token ++ ps)
 
 
-downloadMap :: String -> IO (Either String DynamicImage)  
--- downloadMap :: String -> FilePath -> IO ()
+downloadMap :: String -> IO (Either String DynamicImage)
 downloadMap mapUrl = do
     response <- openURI mapUrl
     case response of 
         Left  err -> return (Left err)
-        -- Right map -> BStr.writeFile filePath map
         Right img -> return (decodePng img)
 
-        
-defaultSavePath :: String
-defaultSavePath = "tmp/map.png" 
+
+bgMapPath :: FilePath
+bgMapPath = "res/pepe.png"

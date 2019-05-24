@@ -28,6 +28,9 @@ dependencies:
 - JuicyPixels
 - curl
 - download-curl
+- gtk2hs-buildtools
+- gtk
+- mtl
 
 library:
   source-dirs: src

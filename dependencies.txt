@@ -1,1 +1,6 @@
  
+libghc-gtk-dev
+freeglut3-dev
+zlib1g-dev
+build-essentials
+libcurl4-gnutls-dev

@@ -1,2 +1,4 @@
-# fp
-Functional Programming Course project repository
+# Weather Timelapse in Haskell
+
+Functional Programming Course project repository.
+

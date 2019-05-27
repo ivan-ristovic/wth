@@ -24,7 +24,7 @@ drawing img _ = case GJ.fromDynamicImage img of
 
 downloadImageCallback :: IO ()
 downloadImageCallback = do
-    url <- formApiUrl "temp_new" 0 0 0
+    url <- formApiUrl WindSpeed 0 0 0
     downloaded <- downloadMap url
     Log.debug url
     case downloaded of

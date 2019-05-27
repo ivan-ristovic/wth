@@ -1,4 +1,4 @@
-module Logger (debug, logMessage) where
+module Logger (LogLevel (..), debug, logMessage) where
     
 
 data LogLevel = Debug

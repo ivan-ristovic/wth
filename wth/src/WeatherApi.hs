@@ -1,4 +1,4 @@
-module WeatherApi ( formApiUrl, downloadMap, bgMapPath ) where
+module WeatherApi where
 
 import qualified Data.ByteString as BStr
 import Network.Curl.Download
@@ -6,15 +6,27 @@ import Codec.Picture.Png
 import Codec.Picture.Types
 
 
+data Layer = Temperature
+           | Clouds
+           | Precipitation
+           | Pressure
+           | WindSpeed
+
+
 -- https://openweathermap.org/api/weathermaps
-formApiUrl :: String -> Int -> Int -> Int -> IO String
+formApiUrl :: Layer -> Int -> Int -> Int -> IO String
 formApiUrl layer zoom tilex tiley = do 
     token <- readFile "token.txt"
+    let layerStr = case layer of Temperature   -> "temp_new"
+                                 Clouds        -> "clouds_new"
+                                 Precipitation -> "precipitation_new"
+                                 Pressure      -> "pressure_new"
+                                 WindSpeed     -> "wind_new"
     let zStr = show zoom
     let xStr = show tilex
     let yStr = show tilex
     let baseUrl = "https://tile.openweathermap.org/map/"
-    return (baseUrl ++ layer ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ ".png?appid=" ++ token)
+    return (baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ ".png?appid=" ++ token)
 
 
 -- https://openweathermap.org/api/weather-map-2  (prolly wont be used since we are poor)

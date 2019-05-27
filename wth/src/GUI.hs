@@ -1,5 +1,6 @@
-module GUI where
+module GUI (guiWindow, guiLabelBox, guiButton) where
 
+import Logger as Log
 import Graphics.UI.Gtk
 import Control.Monad.Trans(liftIO)
 
@@ -9,7 +10,8 @@ guiWindow title = do
     window <- windowNew
     window `on` deleteEvent $ liftIO mainQuit >> return False
     set window [windowTitle := title, containerBorderWidth := 100]
-    onDestroy window mainQuit
+    onDestroy window guiInternalWindowDestroyCallback
+    Log.debug "[GUI] Created window"
     return window
 
 
@@ -19,13 +21,21 @@ guiLabelBox txt = do
     set box [containerBorderWidth := 2]
     label <- labelNew (Just txt)
     boxPackStart box label PackNatural 3
+    Log.debug $ "[GUI] Created label: " ++ txt
     return box
 
 
 guiButton :: String -> IO () -> IO Button
-guiButton text callback = do
+guiButton txt callback = do
     button <- buttonNew
-    buttonTitle <- guiLabelBox text
+    buttonTitle <- guiLabelBox txt
     containerAdd button buttonTitle
     onClicked button callback
+    Log.debug $ "[GUI] Created button: " ++ txt
     return button
+
+
+guiInternalWindowDestroyCallback :: IO()
+guiInternalWindowDestroyCallback = do 
+    Log.debug "[GUI] Destroying window..."
+    mainQuit

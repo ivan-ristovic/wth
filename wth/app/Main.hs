@@ -2,6 +2,7 @@ module Main where
 
 import GUI
 import WeatherApi
+import Logger as Log
 import Codec.Picture.Types
 import Graphics.UI.Gtk
 import qualified Data.ByteString as BStr
@@ -25,6 +26,7 @@ downloadImageCallback :: IO ()
 downloadImageCallback = do
     url <- formApiUrl "temp_new" 0 0 0
     downloaded <- downloadMap url
+    Log.debug url
     case downloaded of
         Left err  -> putStrLn err
         Right img -> G.animate window background (drawing img)

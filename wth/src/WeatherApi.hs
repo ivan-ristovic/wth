@@ -1,4 +1,4 @@
-module Lib ( formApiUrl, downloadMap, bgMapPath ) where
+module WeatherApi ( formApiUrl, downloadMap, bgMapPath ) where
 
 import qualified Data.ByteString as BStr
 import Network.Curl.Download

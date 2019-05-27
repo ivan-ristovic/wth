@@ -1,8 +1,8 @@
 module Main where
 
-import Lib
+import GUI
+import WeatherApi
 import Codec.Picture.Types
-import Control.Monad.Trans(liftIO)
 import Graphics.UI.Gtk
 import qualified Data.ByteString as BStr
 import qualified Graphics.Gloss as G
@@ -21,8 +21,8 @@ drawing img _ = case GJ.fromDynamicImage img of
     Nothing  -> G.Blank
     Just pngMap -> G.pictures [(GG.png bgMapPath), pngMap]
 
-loadPepe :: IO ()
-loadPepe = do
+downloadImageCallback :: IO ()
+downloadImageCallback = do
     url <- formApiUrl "temp_new" 0 0 0
     downloaded <- downloadMap url
     case downloaded of
@@ -33,23 +33,8 @@ loadPepe = do
 main :: IO ()
 main = do
     initGUI
-    w <- windowNew
---    w `on` deleteEvent $ liftIO mainQuit >> return False
-    set w [windowTitle := "Pepe",
-            containerBorderWidth := 100]
-    button <- buttonNew
-    onClicked button (loadPepe)
-    box    <- labelBox "HONK!   "
-    containerAdd button box
-    containerAdd w button
-    widgetShowAll w
-    onDestroy w mainQuit
+    window      <- guiWindow "WTH"
+    btnDownload <- guiButton "Download image" downloadImageCallback
+    containerAdd window btnDownload
+    widgetShowAll window
     mainGUI
-    
-labelBox :: String -> IO HBox
-labelBox txt = do
-  box   <- hBoxNew False 0
-  set box [containerBorderWidth := 2]
-  label <- labelNew (Just txt)
-  boxPackStart box label PackNatural 3
-  return box

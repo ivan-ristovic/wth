@@ -5,7 +5,6 @@ import Network.Curl.Download
 import Codec.Picture.Png
 import Codec.Picture.Types
 
-
 data Layer = Temperature
            | Clouds
            | Precipitation
@@ -15,7 +14,7 @@ data Layer = Temperature
 
 -- https://openweathermap.org/api/weathermaps
 formApiUrl :: Layer -> Int -> Int -> Int -> IO String
-formApiUrl layer zoom tilex tiley = do 
+formApiUrl layer zoom tilex tiley = do
     token <- readFile "token.txt"
     let layerStr = case layer of Temperature   -> "temp_new"
                                  Clouds        -> "clouds_new"
@@ -37,14 +36,14 @@ formApiQuery layer zoom tilex tiley params = do
     let xStr = show tilex
     let yStr = show tilex
     let baseUrl = "https://maps.openweathermap.org/maps/2.0/weather/"
-    let ps = foldl (++) "" $ map (\p -> "&" ++ (fst p) ++ "=" ++ (snd p)) params 
+    let ps = foldl (++) "" $ map (\p -> "&" ++ (fst p) ++ "=" ++ (snd p)) params
     return (baseUrl ++ layer ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ "/?appid=" ++ token ++ ps)
 
 
 downloadMap :: String -> IO (Either String DynamicImage)
 downloadMap mapUrl = do
     response <- openURI mapUrl
-    case response of 
+    case response of
         Left  err -> return (Left err)
         Right img -> return (decodePng img)
 

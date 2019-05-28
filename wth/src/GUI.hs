@@ -4,6 +4,7 @@ import Logger as Log
 import Graphics.UI.Gtk
 import Control.Monad.Trans(liftIO)
 
+import qualified Graphics.Gloss.Game as Game
 
 guiWindow :: String -> IO Window
 guiWindow title = do
@@ -36,6 +37,6 @@ guiButton txt callback = do
 
 
 guiInternalWindowDestroyCallback :: IO()
-guiInternalWindowDestroyCallback = do 
+guiInternalWindowDestroyCallback = do
     Log.debug "[GUI] Destroying window..."
     mainQuit

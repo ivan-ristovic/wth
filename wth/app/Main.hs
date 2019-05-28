@@ -1,7 +1,8 @@
 module Main where
 
 import GUI
-import WeatherApi
+import World as W
+import WeatherApi as Api
 import Logger as Log
 import Codec.Picture.Types
 import Graphics.UI.Gtk
@@ -11,27 +12,35 @@ import qualified Graphics.Gloss.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
 
 
-window :: GG.Display
-window = GG.InWindow "wth" (400, 400) (10, 10)
+glossWindow :: GG.Display
+glossWindow = GG.InWindow "wth" (256, 256) (10, 10)
 
 background :: G.Color
 background = G.white
 
-drawing :: DynamicImage -> Float -> G.Picture
-drawing img _ = case GJ.fromDynamicImage img of 
-    Nothing  -> G.Blank
-    Just pngMap -> G.pictures [(GG.png bgMapPath), pngMap]
+view :: World -> G.Picture
+view w = G.pictures [bg w, wmap w, dotAt (x w) (y w)]
+
+dotAt :: Float -> Float -> G.Picture
+dotAt x y = G.translate x y $ G.color G.red $ GG.circleSolid 3
+
+processEvent :: GG.Event -> World -> World
+processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) world =
+                  world { x = nx
+                        , y = ny
+                        }
+processEvent _ w = w
 
 downloadImageCallback :: IO ()
 downloadImageCallback = do
-    url <- formApiUrl WindSpeed 0 0 0
-    downloaded <- downloadMap url
+    url        <- Api.formApiUrl WindSpeed 0 0 0
+    downloaded <- Api.downloadMap url
     Log.debug url
     case downloaded of
         Left err  -> putStrLn err
-        Right img -> G.animate window background (drawing img)
+        Right img -> GG.play glossWindow background 120 (W.defaultWorld img) (GG.scale 1 1 . view) processEvent [ W.update ]
 
-        
+
 main :: IO ()
 main = do
     initGUI

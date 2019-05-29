@@ -1,13 +1,30 @@
-module GUI (guiWindow, guiLabelBox, guiButton) where
+module GUI (guiWindow) where
 
+import World as W
+import WeatherApi as Api
 import Logger as Log
-import Graphics.UI.Gtk
+import Codec.Picture.Types
 import Control.Monad.Trans(liftIO)
+import Graphics.UI.Gtk
+import qualified Data.ByteString as BStr
+import qualified Graphics.Gloss as G
+import qualified Graphics.Gloss.Game as GG
+import qualified Graphics.Gloss.Juicy as GJ
+import qualified Graphics.Gloss.Export.PNG as GEP
 
-import qualified Graphics.Gloss.Game as Game
 
-guiWindow :: String -> IO Window
-guiWindow title = do
+guiWindow :: IO Window
+guiWindow = do
+    window      <- guiFrame "WTH"
+    btnDownload <- guiButton "Download image" downloadImageCallback
+    input       <- guiInputBox "x: "
+    containerAdd input btnDownload
+    containerAdd window input
+    return window
+
+
+guiFrame :: String -> IO Window
+guiFrame title = do
     window <- windowNew
     window `on` deleteEvent $ liftIO mainQuit >> return False
     set window [windowTitle := title, containerBorderWidth := 100]
@@ -36,7 +53,69 @@ guiButton txt callback = do
     return button
 
 
+guiInputBox :: String -> IO HBox
+guiInputBox txt = do
+  box <- hBoxNew False 0
+  set box [containerBorderWidth := 2]
+  label <- labelNew (Just txt)
+  input <- entryNew
+  containerAdd box label
+  containerAdd box input
+  return box
+
+
+downloadImageCallback :: IO ()
+downloadImageCallback = do
+    url        <- Api.formApiUrl WindSpeed 0 0 0
+    downloaded <- Api.downloadMap url
+    Log.debug url
+    case downloaded of
+        Left err  -> putStrLn err
+        Right img -> GEP.exportPictureToPNG (256, 256) background "./test_img.png"  $ view (W.defaultWorld img) --GG.play glossWindow background 120 (W.defaultWorld img) (GG.scale 1 1 . view) processEvent [ W.update ]
+
+
+glossWindow :: GG.Display
+glossWindow = GG.InWindow "wth" (256, 256) (10, 10)
+
+
+background :: G.Color
+background = G.white
+
+
+view :: World -> G.Picture
+view w = G.pictures $ [bg w, wmap w, dotAt (x w) (y w)] ++ grid 1
+
+
+dotAt :: Float -> Float -> G.Picture
+dotAt x y = G.translate x y $ G.color G.red $ GG.circleSolid 3
+
+
 guiInternalWindowDestroyCallback :: IO()
 guiInternalWindowDestroyCallback = do
     Log.debug "[GUI] Destroying window..."
     mainQuit
+
+
+grid :: Int -> [G.Picture]
+grid zoom = map myDrawLine $ (mapHorizontal coordinates) ++ (mapVertical coordinates) -- [[(-270.0 / 2.0, 0), (270.0 / 2.0, 0)], [(0, 270.0 / 2.0), (0, -270.0 / 2.0)]]
+    where coordinates = calculateValues 11
+
+myDrawLine :: [(Float, Float)] -> G.Picture
+myDrawLine l = G.color G.red $ GG.line l
+
+calculateValues :: Int -> [Float]
+calculateValues n = map (\x -> (-256.0 / 2) + x * (256.0 / (fromIntegral n))) $ take (n - 1) [1.0..]
+
+mapHorizontal :: [Float] -> [[(Float, Float)]]
+mapHorizontal coords = map (\x -> [(-270.0 / 2.0, x), (270.0 / 2.0, x)]) coords
+
+mapVertical :: [Float] -> [[(Float, Float)]]
+mapVertical coords = map (\x -> [(x, 270.0 / 2.0), (x, -270.0 / 2.0)]) coords
+
+
+-- processEvent :: GG.Event -> World -> World
+-- processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) world =
+--                   world { x = nx
+--                         , y = ny
+--                         }
+-- processEvent _ w = w

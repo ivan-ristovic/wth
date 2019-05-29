@@ -11,15 +11,20 @@ import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
 import qualified Graphics.Gloss.Export.PNG as GEP
-
+import qualified Graphics.UI.Gtk.Display.Image as GI
 
 guiWindow :: IO Window
 guiWindow = do
     window      <- guiFrame "WTH"
     btnDownload <- guiButton "Download image" downloadImageCallback
-    input       <- guiInputBox "x: "
-    containerAdd input btnDownload
-    containerAdd window input
+    controls    <- guiControls
+    image       <- guiImage "./test_img.png"
+    windowBox   <- hBoxNew False 0
+    containerAdd controls btnDownload
+    set windowBox [containerBorderWidth := 2]
+    containerAdd windowBox controls
+    containerAdd windowBox image
+    containerAdd window windowBox
     return window
 
 
@@ -61,6 +66,29 @@ guiInputBox txt = do
   input <- entryNew
   containerAdd box label
   containerAdd box input
+  return box
+
+
+guiControls :: IO VBox
+guiControls = do
+  box <- vBoxNew False 0
+  set box [containerBorderWidth := 2]
+  xInput <- guiInputBox "x: "
+  yInput <- guiInputBox "y: "
+  adjust <- adjustmentNew 0 0 10 1 0 0
+  slider <- hScaleNew adjust
+  containerAdd box xInput
+  containerAdd box yInput
+  containerAdd box slider
+  return box
+
+
+guiImage :: String -> IO HBox
+guiImage filePath = do
+  box <- hBoxNew False 0
+  set box [containerBorderWidth := 2]
+  image <- imageNewFromFile filePath
+  containerAdd box image
   return box
 
 

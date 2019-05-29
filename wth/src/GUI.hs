@@ -16,9 +16,9 @@ import qualified Graphics.UI.Gtk.Display.Image as GI
 guiWindow :: IO Window
 guiWindow = do
     window      <- guiFrame "WTH"
+    image       <- guiImage "./res/blankmap.PNG"
     btnDownload <- guiButton "Download image" downloadImageCallback
     controls    <- guiControls
-    image       <- guiImage "./test_img.png"
     windowBox   <- hBoxNew False 0
     containerAdd controls btnDownload
     set windowBox [containerBorderWidth := 2]

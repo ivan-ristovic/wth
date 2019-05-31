@@ -10,7 +10,9 @@ import qualified Graphics.Gloss.Juicy as GJ
 
 processEvent :: GG.Event -> Model -> IO Model
 
-processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) model = return $ changeDotPos nx ny model
+processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) model = do
+    Log.debug $ "Mouse click at: " ++ (show (nx, ny))
+    return $ changeDotPos nx ny model
 
 processEvent (GG.EventKey (GG.MouseButton GG.RightButton) GG.Down _ _) model = do
     url        <- Api.formApiUrl WindSpeed 0 0 0

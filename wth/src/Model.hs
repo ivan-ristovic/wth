@@ -1,7 +1,9 @@
-module Model ( Component(..)
+module Model ( Control(..)
              , World(..)
              , Model(..)
              , defaultModel
+             , getWorld
+             , getControls
              , getDotPos
              , getZoom
              , getMap
@@ -11,6 +13,7 @@ module Model ( Component(..)
              , changeZoom
              , changeLayer
              , changeMap
+             , addControl
              ) where
 
 import Codec.Picture.Types
@@ -21,12 +24,12 @@ import qualified Graphics.Gloss.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
 
 
-data Component = Component
-                 { id   :: Int
-                 , xpos :: Float
-                 , ypos :: Float
-                 , img  :: Float
-                 }
+data Control = Control
+               { guid :: Int
+               , xpos :: Float
+               , ypos :: Float
+               , img  :: G.Picture
+               }
 
 data World = World
              { x    :: Float
@@ -37,14 +40,14 @@ data World = World
              , wmap :: G.Picture
              }
 
-type Model = (World, [Component])
+type Model = (World, [Control])
 
 
-getWorldInternal :: Model -> World
-getWorldInternal = fst
+getWorld :: Model -> World
+getWorld = fst
 
-getComponentsInternal :: Model -> [Component]
-getComponentsInternal = snd
+getControls :: Model -> [Control]
+getControls = snd
 
 
 defaultModel :: Model
@@ -61,47 +64,58 @@ defaultModel =
 
 updateModel :: Float -> Model -> IO Model
 updateModel _ model = do 
-    Log.debug "Updating model"
+    -- Log.debug "Updating model"
     return model
 
 getDotPos :: Model -> (Float, Float)
 getDotPos model = 
-    let world = getWorldInternal model
+    let world = getWorld model
     in (x world, y world)
 
 getZoom :: Model -> Int
 getZoom model = 
-    let world = getWorldInternal model
+    let world = getWorld model
     in z world
 
 getMap :: Model -> G.Picture
 getMap model = 
-    let world = getWorldInternal model
+    let world = getWorld model
     in wmap world
 
 getBackground :: Model -> G.Picture
 getBackground model = 
-    let world = getWorldInternal model
+    let world = getWorld model
     in bg world
 
 changeDotPos :: Float -> Float -> Model -> Model
 changeDotPos xNew yNew model = 
-    let world = getWorldInternal model 
-    in (world { x = xNew, y = yNew }, getComponentsInternal model)
+    let world = getWorld model 
+    in (world { x = xNew, y = yNew }, getControls model)
 
 changeZoom :: Int -> Model -> Model
 changeZoom zNew model = 
-    let world = getWorldInternal model 
-    in (world { z = zNew }, getComponentsInternal model)
+    let world = getWorld model 
+    in (world { z = zNew }, getControls model)
 
 changeLayer :: Layer -> Model -> Model
 changeLayer lNew model = 
-    let world = getWorldInternal model 
-    in (world { l = lNew }, getComponentsInternal model)
+    let world = getWorld model 
+    in (world { l = lNew }, getControls model)
 
 changeMap :: DynamicImage -> Model -> Model
 changeMap img model = 
     let pngMap = case GJ.fromDynamicImage img of Nothing  -> G.Blank
                                                  Just png -> png
-        world = getWorldInternal model 
-    in (world { wmap = pngMap }, getComponentsInternal model)
+        world  = getWorld model 
+    in (world { wmap = pngMap }, getControls model)
+
+addControl :: Control -> Model -> Model
+addControl control model = 
+    let world      = getWorld model
+        controls = getControls model
+        newControl = control { guid = getNextGuidInternal controls }
+    in (world, newControl : controls)
+
+
+getNextGuidInternal :: [Control] -> Int
+getNextGuidInternal controls = head $ dropWhile (\i -> any (\control -> guid control == i) controls) [1..]

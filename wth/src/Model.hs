@@ -25,10 +25,13 @@ import qualified Graphics.Gloss.Juicy as GJ
 
 
 data Control = Control
-               { guid :: Int
-               , xpos :: Float
-               , ypos :: Float
-               , img  :: G.Picture
+               { guid   :: Int
+               , cx      :: Float
+               , cy      :: Float
+               , cw      :: Float
+               , ch      :: Float
+               , img    :: G.Picture
+               , action :: World -> World
                }
 
 data World = World

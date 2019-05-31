@@ -28,6 +28,7 @@ dependencies:
 - JuicyPixels
 - curl
 - download-curl
+- time
 
 library:
   source-dirs: src

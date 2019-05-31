@@ -15,6 +15,7 @@ module Model ( Component(..)
 
 import Codec.Picture.Types
 import WeatherApi as Api
+import qualified Logger as Log
 import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
@@ -59,7 +60,9 @@ defaultModel =
     in (world, [])
 
 updateModel :: Float -> Model -> IO Model
-updateModel _ model = return model
+updateModel _ model = do 
+    Log.debug "Updating model"
+    return model
 
 getDotPos :: Model -> (Float, Float)
 getDotPos model = 

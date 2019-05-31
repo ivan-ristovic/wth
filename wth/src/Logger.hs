@@ -1,5 +1,7 @@
 module Logger (LogLevel (..), debug, logMessage) where
     
+import Data.Time
+
 
 data LogLevel = Debug
               | Info
@@ -22,4 +24,6 @@ logMessage lvl = case lvl of
 
 
 logMessageInternal :: String -> String -> IO ()
-logMessageInternal lvl msg = putStrLn (" > [" ++ lvl ++ "] " ++ msg)
+logMessageInternal lvl msg = do
+    time <- getCurrentTime 
+    putStrLn ("[" ++ (show time) ++ "] [" ++ lvl ++ "] " ++ msg)

@@ -7,4 +7,10 @@ import Graphics.Gloss.Interface.IO.Game
 
 
 main :: IO ()
-main = playIO guiWindow background 1 defaultModel view processEvent updateModel
+main = playIO guiWindow 
+              background 
+              1 
+              defaultModel 
+              view 
+              processEvent 
+              updateModel

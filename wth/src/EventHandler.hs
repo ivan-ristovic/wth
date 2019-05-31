@@ -14,10 +14,12 @@ processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) mod
 
 processEvent (GG.EventKey (GG.MouseButton GG.RightButton) GG.Down _ _) model = do
     url        <- Api.formApiUrl WindSpeed 0 0 0
+    Log.debug $ "Downloading: " ++ url
     downloaded <- Api.downloadMap url
-    Log.debug url
+    Log.debug "Download complete"
     case downloaded of
-        Left err  -> return model
+        Left err  -> do Log.logMessage Log.Error err
+                        return model
         Right img -> return $ changeMap img model
 
 processEvent _ model = return model

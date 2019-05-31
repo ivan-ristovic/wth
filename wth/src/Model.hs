@@ -58,6 +58,9 @@ defaultModel =
                }
     in (world, [])
 
+updateModel :: Float -> Model -> IO Model
+updateModel _ model = return model
+
 getDotPos :: Model -> (Float, Float)
 getDotPos model = 
     let world = getWorldInternal model
@@ -77,9 +80,6 @@ getBackground :: Model -> G.Picture
 getBackground model = 
     let world = getWorldInternal model
     in bg world
-
-updateModel :: Float -> Model -> Model
-updateModel _ model = model
 
 changeDotPos :: Float -> Float -> Model -> Model
 changeDotPos xNew yNew model = 

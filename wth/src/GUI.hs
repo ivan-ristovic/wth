@@ -53,7 +53,7 @@ createControlPicture control =
         y = cy control
         x' = x - (fromIntegral $ fst windowSize) / 2.0
         y' = (fromIntegral $ snd windowSize) / 2.0 - y
-    in G.translate x' y'  $ img control
+    in G.translate x' y' $ img control
 
     
 buttonImgTempImpl :: G.Picture

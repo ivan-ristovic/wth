@@ -1,4 +1,4 @@
-module EventHandler where
+module EventHandler (processEvent) where
 
 import Model
 import GUI
@@ -23,7 +23,8 @@ processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) mod
                                        in trace (show $ [(x', y', 0, 0), (x, y, w, h)]) $ (x' >= x && x' <= x + w) && (y' >= y && y' <= y + h)
         activatedControls = filter isClickInsideControl controls
         newWorld = foldr ($) world $ map action activatedControls
-     in return (newWorld, controls)
+     in if null activatedControls then return $ changeDotPos (nx, ny) model
+                                  else return $ makeModel world controls 
 
 processEvent (GG.EventKey (GG.MouseButton GG.RightButton) GG.Down _ _) model = do
     url        <- Api.formApiUrl WindSpeed 0 0 0

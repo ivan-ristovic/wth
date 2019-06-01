@@ -4,6 +4,8 @@ module Model ( Control(..)
              , defaultModel
              , getWorld
              , getControls
+             , makeModel
+             , changeWorld
              , getDotPos
              , getZoom
              , getMap
@@ -52,6 +54,12 @@ getWorld = fst
 getControls :: Model -> [Control]
 getControls = snd
 
+makeModel :: World -> [Control] -> Model
+makeModel world controls = (world, controls)
+
+changeWorld :: World -> Model -> Model
+changeWorld world model = makeModel world (getControls model)
+
 
 defaultModel :: Model
 defaultModel = 
@@ -90,34 +98,34 @@ getBackground model =
     let world = getWorld model
     in bg world
 
-changeDotPos :: Float -> Float -> Model -> Model
-changeDotPos xNew yNew model = 
+changeDotPos :: (Float, Float) -> Model -> Model
+changeDotPos pos model = 
     let world = getWorld model 
-    in (world { x = xNew, y = yNew }, getControls model)
+    in changeWorld (world { x = fst pos, y = snd pos }) model
 
 changeZoom :: Int -> Model -> Model
 changeZoom zNew model = 
     let world = getWorld model 
-    in (world { z = zNew }, getControls model)
+    in changeWorld (world { z = zNew }) model
 
 changeLayer :: Layer -> Model -> Model
 changeLayer lNew model = 
     let world = getWorld model 
-    in (world { l = lNew }, getControls model)
+    in changeWorld (world { l = lNew }) model
 
 changeMap :: DynamicImage -> Model -> Model
 changeMap img model = 
     let pngMap = case GJ.fromDynamicImage img of Nothing  -> G.Blank
                                                  Just png -> png
         world  = getWorld model 
-    in (world { wmap = pngMap }, getControls model)
+    in changeWorld (world { wmap = pngMap }) model
 
 addControl :: Control -> Model -> Model
 addControl control model = 
     let world      = getWorld model
         controls = getControls model
         newControl = control { guid = getNextGuidInternal controls }
-    in (world, newControl : controls)
+    in makeModel world (newControl : controls)
 
 
 getNextGuidInternal :: [Control] -> Int

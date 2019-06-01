@@ -82,4 +82,4 @@ guiCreateControls model =
                   , action = processLayerChange Api.Pressure
                   }
         allControls = [btnTemp, btnWind, btnPrec, btnClou, btnPres]
-    in foldl (flip addControl) model allControls
+    in foldr (addControl) model allControls

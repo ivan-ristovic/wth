@@ -123,7 +123,7 @@ changeMap img model =
 addControl :: Control -> Model -> Model
 addControl control model = 
     let world      = getWorld model
-        controls = getControls model
+        controls   = getControls model
         newControl = control { guid = getNextGuidInternal controls }
     in makeModel world (newControl : controls)
 

@@ -7,10 +7,7 @@ import qualified Graphics.Gloss.Juicy as GJ
 
 
 drawPointerAt :: (Float, Float) -> G.Picture
-drawPointerAt p = 
-    let x = fst p
-        y = snd p
-    in G.translate x y $ G.color G.red $ GG.circleSolid 3
+drawPointerAt (x, y) = G.translate x y $ G.color G.red $ GG.circleSolid 3
 
 
 drawGrid :: (Int, Int) -> Int -> G.Picture

@@ -8,6 +8,7 @@ import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
 
+
 processEvent :: GG.Event -> Model -> IO Model
 
 processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) model = do
@@ -21,7 +22,7 @@ processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) mod
         activatedControls = filter isClickInsideControl controls
         newWorld = foldr ($) world $ map action activatedControls
      in if null activatedControls then return $ changeDotPos (nx, ny) model
-                                  else return $ makeModel world controls 
+                                  else return $ makeModel newWorld controls 
 
 processEvent (GG.EventKey (GG.MouseButton GG.RightButton) GG.Down _ _) model = do
     url        <- Api.formApiUrl WindSpeed 0 0 0

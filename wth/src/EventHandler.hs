@@ -26,10 +26,10 @@ processEvent _ model = return model
 processLayerChange :: Api.Layer -> Model -> IO Model
 processLayerChange layer model = do
     url        <- Api.formApiUrl layer 0 0 0
-    Log.debug $ "Downloading: " ++ url
+    Log.dbg $ "Downloading: " ++ url
     downloaded <- Api.downloadMap url
-    Log.debug "Download complete"
+    Log.dbg "Download complete"
     let newModel = changeLayer layer model
-     in case downloaded of Left err  -> do Log.logMessage Log.Error err
+     in case downloaded of Left err  -> do Log.err err
                                            return newModel
                            Right img -> return $ changeMap img newModel

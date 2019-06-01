@@ -1,4 +1,4 @@
-module Logger (LogLevel (..), debug, logMessage) where
+module Logger (LogLevel (..), dbg, inf, wrn, err, crc, logMessage) where
     
 import Data.Time
 
@@ -10,8 +10,20 @@ data LogLevel = Debug
               | Critical
 
 
-debug :: String -> IO ()
-debug = logMessage Debug
+dbg :: String -> IO ()
+dbg = logMessage Debug
+
+inf :: String -> IO ()
+inf = logMessage Info
+
+wrn :: String -> IO ()
+wrn = logMessage Warning
+
+err :: String -> IO ()
+err = logMessage Error
+
+crc :: String -> IO ()
+crc = logMessage Critical
 
 
 logMessage :: LogLevel -> String -> IO ()
@@ -26,4 +38,4 @@ logMessage lvl = case lvl of
 logMessageInternal :: String -> String -> IO ()
 logMessageInternal lvl msg = do
     time <- getCurrentTime 
-    putStrLn ("[" ++ (show time) ++ "] [" ++ lvl ++ "] " ++ msg)
+    putStrLn $ "[" ++ (show time) ++ "] [" ++ lvl ++ "] " ++ msg

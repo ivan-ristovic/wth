@@ -19,7 +19,7 @@ module Model ( Control(..)
              ) where
 
 import Codec.Picture.Types
-import WeatherApi as Api
+import qualified WeatherApi as Api
 import qualified Logger as Log
 import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Game as GG
@@ -28,19 +28,19 @@ import qualified Graphics.Gloss.Juicy as GJ
 
 data Control = Control
                { guid   :: Int
-               , cx      :: Float
-               , cy      :: Float
-               , cw      :: Float
-               , ch      :: Float
+               , cx     :: Float
+               , cy     :: Float
+               , cw     :: Float
+               , ch     :: Float
                , img    :: G.Picture
-               , action :: World -> World
+               , action :: Model -> IO Model
                }
 
 data World = World
              { x    :: Float
              , y    :: Float
              , z    :: Int
-             , l    :: Layer
+             , l    :: Api.Layer
              , bg   :: G.Picture
              , wmap :: G.Picture
              }
@@ -108,7 +108,7 @@ changeZoom zNew model =
     let world = getWorld model 
     in changeWorld (world { z = zNew }) model
 
-changeLayer :: Layer -> Model -> Model
+changeLayer :: Api.Layer -> Model -> Model
 changeLayer lNew model = 
     let world = getWorld model 
     in changeWorld (world { l = lNew }) model

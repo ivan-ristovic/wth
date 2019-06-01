@@ -1,10 +1,9 @@
 module Painter where
 
+import Model
 import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Interface.IO.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
-
-import Debug.Trace
 
 
 drawPointerAt :: (Float, Float) -> G.Picture
@@ -29,5 +28,13 @@ drawGrid size n =
         makePath = \p1 p2 -> [p1, p2]
         vertical   = zipWith (makePath) (zip pointsx startx) (zip pointsx stopx)
         horizontal = zipWith (makePath) (zip starty pointsy) (zip stopy pointsy)
-        whatever = \x -> trace (show (horizontal ++ vertical)) x
-    in whatever $ G.pictures $ map (G.color G.blue . G.line) (horizontal ++ vertical)
+    in G.pictures $ map (G.color G.blue . G.line) (horizontal ++ vertical)
+
+
+drawControl :: Control -> G.Picture
+drawControl control = 
+    let x = cx control
+        y = cy control
+        w = cw control
+        h = ch control
+    in G.translate x y $ G.scale (w/50.0) (h/50.0) $ img control

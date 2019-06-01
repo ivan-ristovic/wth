@@ -6,6 +6,8 @@ import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Interface.IO.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
 
+import Debug.Trace
+
 
 windowSize :: (Int, Int)
 windowSize = (256, 256)
@@ -37,8 +39,8 @@ guiCreateControls :: Model -> Model
 guiCreateControls model = 
     let tmpbutton = Control 
                   { guid = 0
-                  , cx = 100
-                  , cy = 100
+                  , cx = -20
+                  , cy = -20
                   , cw = 50
                   , ch = 50
                   , img = buttonImgTempImpl
@@ -51,9 +53,7 @@ createControlPicture :: Control -> G.Picture
 createControlPicture control = 
     let x = cx control
         y = cy control
-        x' = x - (fromIntegral $ fst windowSize) / 2.0
-        y' = (fromIntegral $ snd windowSize) / 2.0 - y
-    in G.translate x' y' $ img control
+    in G.translate x y $ img control
 
     
 buttonImgTempImpl :: G.Picture

@@ -7,20 +7,17 @@ import WeatherApi as Api
 import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
-import Debug.Trace
 
 processEvent :: GG.Event -> Model -> IO Model
 
 processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) model = do
     let world = getWorld model
         controls = getControls model
-        x' = (fromIntegral $ fst windowSize) / 2.0 + nx
-        y' = (fromIntegral $ snd windowSize) / 2.0 - ny
         isClickInsideControl = \ctl -> let x = cx ctl
                                            y = cy ctl
                                            w = cw ctl
                                            h = ch ctl
-                                       in trace (show $ [(x', y', 0, 0), (x, y, w, h)]) $ (x' >= x && x' <= x + w) && (y' >= y && y' <= y + h)
+                                       in (nx >= x - w/2 && nx <= x + w/2) && (ny >= y - h/2 && ny <= y + h/2)
         activatedControls = filter isClickInsideControl controls
         newWorld = foldr ($) world $ map action activatedControls
      in if null activatedControls then return $ changeDotPos (nx, ny) model

@@ -1,6 +1,7 @@
 module GUI where
 
 import Model
+import Painter
 import Logger as Log
 import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Interface.IO.Game as GG
@@ -21,15 +22,10 @@ background = G.white
 
 view :: Model -> IO G.Picture
 view model = 
-    let controlImages = map createControlPicture $ getControls model
-        backgroundImages = [getBackground model, getMap model]  
+    let controlImages    = map createControlPicture $ getControls model
+        grid             = drawGrid windowSize (getZoom model + 2)
+        backgroundImages = [getBackground model, getMap model, grid]  
     in return $ G.pictures (backgroundImages ++ controlImages ++ [drawPointerAt (getDotPos model)])
-
-drawPointerAt :: (Float, Float) -> G.Picture
-drawPointerAt p = 
-    let x = fst p
-        y = snd p
-    in G.translate x y $ G.color G.red $ GG.circleSolid 3
 
 
 guiDisplay :: GG.Display

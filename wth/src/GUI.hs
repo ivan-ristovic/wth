@@ -36,7 +36,7 @@ guiDisplay = GG.InWindow "wth" windowSize windowPos
 
 guiCreateControls :: Model -> Model
 guiCreateControls model = 
-    let tmpbutton = Control 
+    let btnTemp = Control 
                   { guid = 0
                   , cx = -110
                   , cy = 110
@@ -45,4 +45,14 @@ guiCreateControls model =
                   , img = GGG.png "res/controls/temp.PNG"
                   , action = processLayerChange Api.Temperature
                   }
-    in addControl tmpbutton model
+        btnWind = Control 
+                  { guid = 0
+                  , cx = -80
+                  , cy = 110
+                  , cw = 25
+                  , ch = 25
+                  , img = GGG.png "res/controls/wind.PNG"
+                  , action = processLayerChange Api.WindSpeed
+                  }
+        allControls = [btnTemp, btnWind]
+    in foldl (flip addControl) model allControls

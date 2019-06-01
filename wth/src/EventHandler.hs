@@ -9,7 +9,6 @@ import qualified Graphics.Gloss.Juicy as GJ
 
 
 processEvent :: GG.Event -> Model -> IO Model
-
 processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) model = do
     let world = getWorld model
         controls = getControls model
@@ -21,7 +20,6 @@ processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) mod
         activatedControls = filter isClickInsideControl controls
      in if null activatedControls then return $ changeDotPos (nx, ny) model
                                   else (action (head activatedControls)) model
-
 processEvent _ model = return model
 
 

@@ -28,7 +28,7 @@ drawGrid size n =
         makePath = \p1 p2 -> [p1, p2]
         vertical   = zipWith (makePath) (zip pointsx startx) (zip pointsx stopx)
         horizontal = zipWith (makePath) (zip starty pointsy) (zip stopy pointsy)
-    in G.pictures $ map (G.color G.blue . G.line) (horizontal ++ vertical)
+    in G.pictures $ map (G.color G.azure . G.line) (horizontal ++ vertical)
 
 
 drawControl :: Control -> G.Picture

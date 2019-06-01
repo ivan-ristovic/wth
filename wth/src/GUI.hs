@@ -54,5 +54,32 @@ guiCreateControls model =
                   , img = GGG.png "res/controls/wind.PNG"
                   , action = processLayerChange Api.WindSpeed
                   }
-        allControls = [btnTemp, btnWind]
+        btnPrec = Control 
+                  { guid = 0
+                  , cx = -50
+                  , cy = 110
+                  , cw = 25
+                  , ch = 25
+                  , img = GGG.png "res/controls/prec.PNG"
+                  , action = processLayerChange Api.Precipitation
+                  }
+        btnClou = Control 
+                  { guid = 0
+                  , cx = -20
+                  , cy = 110
+                  , cw = 25
+                  , ch = 25
+                  , img = GGG.png "res/controls/clou.PNG"
+                  , action = processLayerChange Api.Clouds
+                  }
+        btnPres = Control 
+                  { guid = 0
+                  , cx = 10
+                  , cy = 110
+                  , cw = 25
+                  , ch = 25
+                  , img = GGG.png "res/controls/pres.PNG"
+                  , action = processLayerChange Api.Pressure
+                  }
+        allControls = [btnTemp, btnWind, btnPrec, btnClou, btnPres]
     in foldl (flip addControl) model allControls

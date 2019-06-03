@@ -23,13 +23,30 @@ processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) mod
 processEvent _ model = return model
 
 
-processLayerChange :: Api.Layer -> Model -> IO Model
-processLayerChange layer model = do
-    url        <- Api.formApiUrl layer 0 0 0
-    Log.dbg $ "Downloading: " ++ url
-    downloaded <- Api.downloadMap url
-    Log.dbg "Download complete"
+processLayerChange :: Api.Layer -> (Int, Int) -> Model -> IO Model
+processLayerChange layer size model = do
     let newModel = changeLayer layer model
-     in case downloaded of Left err  -> do Log.err err
-                                           return newModel
-                           Right img -> return $ changeMap img newModel
+     in downloadAndEditModel size model
+
+
+processZoomChange :: (Int -> Int) -> Model -> IO Model
+processZoomChange f model = do 
+    let oldZoom = getZoom model
+     in return $ changeZoom (f oldZoom) model
+
+    
+downloadAndEditModel :: (Int, Int) -> Model -> IO Model
+downloadAndEditModel size model =
+    let dot = getDotPos model 
+        tilex = div (fst size) (floor (fst dot) + (fst size `div` 2 + 1))
+        tiley = div (snd size) (floor (snd dot) + (snd size `div` 2 + 1))
+        zoom = getZoom model 
+        layer = getLayer model
+     in do
+        url        <- Api.formApiUrl layer zoom tilex tiley
+        Log.dbg $ "Downloading: " ++ url
+        downloaded <- Api.downloadMap url
+        Log.dbg "Download complete"
+        case downloaded of Left err  -> do Log.err err
+                                           return model
+                           Right img -> return $ changeMap img model

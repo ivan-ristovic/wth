@@ -8,6 +8,7 @@ module Model ( Control(..)
              , changeWorld
              , getDotPos
              , getZoom
+             , getLayer
              , getMap
              , getBackground
              , updateModel
@@ -88,6 +89,11 @@ getZoom model =
     let world = getWorld model
     in z world
 
+getLayer :: Model -> Api.Layer
+getLayer model = 
+    let world = getWorld model
+    in l world
+
 getMap :: Model -> G.Picture
 getMap model = 
     let world = getWorld model
@@ -106,7 +112,7 @@ changeDotPos pos model =
 changeZoom :: Int -> Model -> Model
 changeZoom zNew model = 
     let world = getWorld model 
-    in changeWorld (world { z = zNew }) model
+    in changeWorld (world { z = if zNew < 0 then 0 else zNew }) model
 
 changeLayer :: Api.Layer -> Model -> Model
 changeLayer lNew model = 

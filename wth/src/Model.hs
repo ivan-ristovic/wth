@@ -102,7 +102,9 @@ getMap model =
 getBackground :: Model -> G.Picture
 getBackground model =
     let world = getWorld model
-    in bg world
+        sx = 1.0 / (8 + (fromIntegral $ z world));
+        sy = sx
+    in G.scale sx sy $ bg world
 
 changeDotPos :: (Float, Float) -> Model -> Model
 changeDotPos pos model =

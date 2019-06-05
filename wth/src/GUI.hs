@@ -14,7 +14,7 @@ import Debug.Trace
 
 
 windowSize :: (Int, Int)
-windowSize = (256, 256)
+windowSize = (512, 512)
 
 windowPos :: (Int, Int)
 windowPos = (10, 10)

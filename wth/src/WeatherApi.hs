@@ -55,4 +55,4 @@ downloadMap mapUrl = do
 
 
 bgMapPath :: FilePath
-bgMapPath = "res/blankmap.PNG"
+bgMapPath = "res/worldmap.png"

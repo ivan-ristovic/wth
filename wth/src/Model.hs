@@ -17,6 +17,8 @@ module Model ( Control(..)
              , changeLayer
              , changeMap
              , addControl
+             , getScreenSize
+             , getWindowPosition
              ) where
 
 import Codec.Picture.Types
@@ -43,10 +45,15 @@ data World = World
              , l    :: Api.Layer
              , bg   :: G.Picture
              , wmap :: G.Picture
+             , size :: ScreenSize
+             , position :: WindowPosition
              }
 
 type Model = (World, [Control])
 
+type ScreenSize = (Int, Int)
+
+type WindowPosition = (Int, Int)
 
 getWorld :: Model -> World
 getWorld = fst
@@ -70,6 +77,8 @@ defaultModel =
                , l = Api.Temperature
                , bg = GG.png Api.bgMapPath
                , wmap = G.Blank
+               , size = (512, 512)
+               , position = (100, 100)
                }
     in (world, [])
 
@@ -78,6 +87,16 @@ updateModel _ model = do
     -- Log.debug "Updating model"
     -- Log.dbg $ show GA.getScreenSize
     return model
+
+getScreenSize :: Model -> ScreenSize
+getScreenSize model =
+    let world = getWorld model
+    in size world
+
+getWindowPosition :: Model -> ScreenSize
+getWindowPosition model =
+    let world = getWorld model
+    in position world
 
 getDotPos :: Model -> (Float, Float)
 getDotPos model =

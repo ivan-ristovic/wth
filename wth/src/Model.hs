@@ -26,7 +26,6 @@ import qualified Graphics.Gloss as G
 import qualified Graphics.Gloss.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
 
-
 data Control = Control
                { guid   :: Int
                , cx     :: Float
@@ -63,8 +62,8 @@ changeWorld world model = makeModel world (getControls model)
 
 
 defaultModel :: Model
-defaultModel = 
-    let world = World 
+defaultModel =
+    let world = World
                { x = 0
                , y = 0
                , z = 0
@@ -75,59 +74,60 @@ defaultModel =
     in (world, [])
 
 updateModel :: Float -> Model -> IO Model
-updateModel _ model = do 
+updateModel _ model = do
     -- Log.debug "Updating model"
+    -- Log.dbg $ show GA.getScreenSize
     return model
 
 getDotPos :: Model -> (Float, Float)
-getDotPos model = 
+getDotPos model =
     let world = getWorld model
     in (x world, y world)
 
 getZoom :: Model -> Int
-getZoom model = 
+getZoom model =
     let world = getWorld model
     in z world
 
 getLayer :: Model -> Api.Layer
-getLayer model = 
+getLayer model =
     let world = getWorld model
     in l world
 
 getMap :: Model -> G.Picture
-getMap model = 
+getMap model =
     let world = getWorld model
     in wmap world
 
 getBackground :: Model -> G.Picture
-getBackground model = 
+getBackground model =
     let world = getWorld model
     in bg world
 
 changeDotPos :: (Float, Float) -> Model -> Model
-changeDotPos pos model = 
-    let world = getWorld model 
+changeDotPos pos model =
+    let world = getWorld model
     in changeWorld (world { x = fst pos, y = snd pos }) model
 
 changeZoom :: Int -> Model -> Model
-changeZoom zNew model = 
-    let world = getWorld model 
+changeZoom zNew model =
+    let world = getWorld model
     in changeWorld (world { z = if zNew < 0 then 0 else zNew }) model
 
 changeLayer :: Api.Layer -> Model -> Model
-changeLayer lNew model = 
-    let world = getWorld model 
+changeLayer lNew model =
+    let world = getWorld model
     in changeWorld (world { l = lNew }) model
 
 changeMap :: DynamicImage -> Model -> Model
-changeMap img model = 
+changeMap img model =
     let pngMap = case GJ.fromDynamicImage img of Nothing  -> G.Blank
                                                  Just png -> png
-        world  = getWorld model 
+        world  = getWorld model
     in changeWorld (world { wmap = pngMap }) model
 
 addControl :: Control -> Model -> Model
-addControl control model = 
+addControl control model =
     let world      = getWorld model
         controls   = getControls model
         newControl = control { guid = getNextGuidInternal controls }

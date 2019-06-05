@@ -1,6 +1,7 @@
 module WeatherApi where
 
 import qualified Data.ByteString as BStr
+import qualified Data.Text as Txt
 import Network.Curl.Download
 import Codec.Picture.Png
 import Codec.Picture.Types
@@ -23,12 +24,13 @@ layerToStrInternal layer = case layer of Temperature   -> "temp_new"
 formApiUrl :: Layer -> Int -> Int -> Int -> IO String
 formApiUrl layer zoom tilex tiley = do
     token <- readFile "token.txt"
+    let tok = Txt.unpack $ Txt.strip $ Txt.pack token
     let layerStr = layerToStrInternal layer
     let zStr = show zoom
     let xStr = show tilex
     let yStr = show tilex
     let baseUrl = "https://tile.openweathermap.org/map/"
-    return (baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ ".png?appid=" ++ token)
+    return (baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ ".png?appid=" ++ tok)
 
 
 -- https://openweathermap.org/api/weather-map-2  (prolly wont be used since we are poor)

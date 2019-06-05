@@ -29,7 +29,7 @@ drawGrid size n =
 
 
 drawControl :: Control -> G.Picture
-drawControl control = 
+drawControl control =
     let x = cx control
         y = cy control
         w = cw control

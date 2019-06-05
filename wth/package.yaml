@@ -29,6 +29,7 @@ dependencies:
 - curl
 - download-curl
 - time
+- text
 
 library:
   source-dirs: src

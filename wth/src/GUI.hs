@@ -1,5 +1,5 @@
 module GUI where
-    
+
 import Model
 import EventHandler
 import Painter
@@ -24,10 +24,10 @@ background :: G.Color
 background = G.white
 
 view :: Model -> IO G.Picture
-view model = 
+view model =
     let controlImages    = map drawControl $ getControls model
         grid             = drawGrid windowSize (getZoom model + 1)
-        backgroundImages = [getBackground model, getMap model, grid]  
+        backgroundImages = [getBackground model, getMap model, grid]
     in return $ G.pictures (backgroundImages ++ controlImages ++ [drawPointerAt (getDotPos model)])
 
 
@@ -35,8 +35,8 @@ guiDisplay :: GG.Display
 guiDisplay = GG.InWindow "wth" windowSize windowPos
 
 guiCreateControls :: Model -> Model
-guiCreateControls model = 
-    let btnTemp = Control 
+guiCreateControls model =
+    let btnTemp = Control
                   { guid = 0
                   , cx = -110
                   , cy = 110
@@ -45,7 +45,7 @@ guiCreateControls model =
                   , img = GGG.png "res/controls/temp.PNG"
                   , action = processLayerChange Api.Temperature windowSize
                   }
-        btnWind = Control 
+        btnWind = Control
                   { guid = 0
                   , cx = -80
                   , cy = 110
@@ -54,7 +54,7 @@ guiCreateControls model =
                   , img = GGG.png "res/controls/wind.PNG"
                   , action = processLayerChange Api.WindSpeed windowSize
                   }
-        btnPrec = Control 
+        btnPrec = Control
                   { guid = 0
                   , cx = -50
                   , cy = 110
@@ -63,7 +63,7 @@ guiCreateControls model =
                   , img = GGG.png "res/controls/prec.PNG"
                   , action = processLayerChange Api.Precipitation windowSize
                   }
-        btnClou = Control 
+        btnClou = Control
                   { guid = 0
                   , cx = -20
                   , cy = 110
@@ -72,7 +72,7 @@ guiCreateControls model =
                   , img = GGG.png "res/controls/clou.PNG"
                   , action = processLayerChange Api.Clouds windowSize
                   }
-        btnPres = Control 
+        btnPres = Control
                   { guid = 0
                   , cx = 10
                   , cy = 110
@@ -81,7 +81,7 @@ guiCreateControls model =
                   , img = GGG.png "res/controls/pres.PNG"
                   , action = processLayerChange Api.Pressure windowSize
                   }
-        btnZoomIn = Control 
+        btnZoomIn = Control
                     { guid = 0
                     , cx = 110
                     , cy = 110
@@ -90,7 +90,7 @@ guiCreateControls model =
                     , img = GGG.png "res/controls/zin.PNG"
                     , action = processZoomChange (+1)
                     }
-        btnZoomOut = Control 
+        btnZoomOut = Control
                      { guid = 0
                      , cx = 110
                      , cy = 50
@@ -99,7 +99,7 @@ guiCreateControls model =
                      , img = GGG.png "res/controls/zout.PNG"
                      , action = processZoomChange (subtract 1)
                      }
-        btnZoom = Control 
+        btnZoom = Control
                   { guid = 0
                   , cx = 110
                   , cy = 80

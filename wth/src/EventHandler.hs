@@ -44,9 +44,12 @@ processZoomChange f model = do
 downloadAndEditModel :: (Int, Int) -> Model -> IO Model
 downloadAndEditModel size model =
     let dot = getDotPos model
-        tilex = div (fst size) (floor (fst dot) + (fst size `div` 2 + 1))
-        tiley = div (snd size) (floor (snd dot) + (snd size `div` 2 + 1))
         zoom = getZoom model
+        part = (fromIntegral (fst size)) / ((fromIntegral zoom) + 1)
+        movementX = (fromIntegral $ fst size) / 2 + (fst dot)
+        movementY = (fromIntegral $ snd size) / 2 - (snd dot)
+        tilex = (floor (movementY / part))
+        tiley = (floor (movementX / part))
         layer = getLayer model
      in do
         url        <- Api.formApiUrl layer zoom tilex tiley

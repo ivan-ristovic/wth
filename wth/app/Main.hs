@@ -1,12 +1,17 @@
 module Main where
 
 import GUI
-import Graphics.UI.Gtk
+
+import EventHandler
+import Model
+import Graphics.Gloss.Interface.IO.Game
 
 
 main :: IO ()
-main = do
-    initGUI
-    window <- guiWindow
-    widgetShowAll window
-    mainGUI
+main = playIO guiDisplay
+              background
+              1
+              (guiCreateControls defaultModel)
+              view
+              processEvent 
+              updateModel

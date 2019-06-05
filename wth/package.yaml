@@ -28,10 +28,8 @@ dependencies:
 - JuicyPixels
 - curl
 - download-curl
-- gtk2hs-buildtools
-- gtk
-- mtl
-- gloss-export
+- time
+- text
 
 library:
   source-dirs: src

@@ -19,7 +19,6 @@ windowSize = (256, 256)
 windowPos :: (Int, Int)
 windowPos = (10, 10)
 
-
 background :: G.Color
 background = G.white
 

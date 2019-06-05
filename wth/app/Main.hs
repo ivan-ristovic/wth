@@ -1,6 +1,7 @@
 module Main where
 
 import GUI
+
 import EventHandler
 import Model
 import Graphics.Gloss.Interface.IO.Game

@@ -95,7 +95,7 @@ guiCreateControls model =
                    , cw = 25
                    , ch = 25
                    , img = GGG.png "res/controls/zin.PNG"
-                   , action = processZoomChange (+1)
+                   , action = processZoomIncrease
                    }
        btnZoomOut = Control
                     { guid = 0
@@ -104,7 +104,7 @@ guiCreateControls model =
                     , cw = 25
                     , ch = 25
                     , img = GGG.png "res/controls/zout.PNG"
-                    , action = processZoomChange (subtract 1)
+                    , action = processZoomDecrease
                     }
        btnZoom = Control
                  { guid = 0
@@ -113,7 +113,7 @@ guiCreateControls model =
                  , cw = 25
                  , ch = 25
                  , img = GGG.png "res/controls/enter.PNG"
-                 , action = downloadAndEditModel
+                 , action = processZoomActivation
                  }
        allControls = [btnTemp, btnWind, btnPrec, btnClou, btnPres, btnZoomIn, btnZoomOut, btnZoom]
    in foldr addControl model allControls

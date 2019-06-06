@@ -149,8 +149,11 @@ getTileCoordinates model =
 changeTileCoordinates :: TileCoordinates -> Model -> Model
 changeTileCoordinates (x, y) model =
     let world = getWorld model
-        newTx = (tx world) * round (2 ** (fromIntegral $ z world)) + x
-        newTy = (ty world) * round (2 ** (fromIntegral $ z world)) + y
+        zoom = z world
+        zPos t t' = t * round (2 ** (fromIntegral $ z world)) + t'
+        zNeg t    = div t (apiZ world)
+        newTx = if zoom > 0 then zPos (tx world) x else zNeg (tx world)
+        newTy = if zoom > 0 then zPos (ty world) y else zNeg (ty world)
     in changeWorld (world { tx = newTx , ty = newTy }) model
 
 changeDotPos :: (Float, Float) -> Model -> Model

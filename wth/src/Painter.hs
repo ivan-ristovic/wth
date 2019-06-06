@@ -10,12 +10,12 @@ drawPointerAt :: (Float, Float) -> G.Picture
 drawPointerAt (x, y) = G.translate x y $ G.color G.red $ GG.circleSolid 3
 
 
-drawGrid :: (Int, Int) -> Int -> G.Picture
+drawGrid :: (Int, Int) -> Float -> G.Picture
 drawGrid size n =
     let sizex = fromIntegral $ fst size
         sizey = fromIntegral $ snd size
-        stepx = sizex / (fromIntegral n)
-        stepy = sizex / (fromIntegral n)
+        stepx = sizex / n
+        stepy = sizex / n
         pointsx = map (\x -> x-(sizex/2.0)) [0.0, stepx .. sizex]
         pointsy = map (\x -> x-(sizey/2.0)) [0.0, stepy .. sizey]
         startx = cycle [0.0-(sizex/2.0)]

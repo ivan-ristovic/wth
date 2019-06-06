@@ -16,8 +16,10 @@ module Model ( Control(..)
              , changeZoom
              , changeLayer
              , changeMap
+             , changeControls
              , addControl
              , getScreenSize
+             , changeScreenSize
              , getWindowPosition
              ) where
 
@@ -93,7 +95,7 @@ getScreenSize model =
     let world = getWorld model
     in size world
 
-getWindowPosition :: Model -> ScreenSize
+getWindowPosition :: Model -> WindowPosition
 getWindowPosition model =
     let world = getWorld model
     in position world
@@ -146,6 +148,18 @@ changeMap img model =
                                                  Just png -> png
         world  = getWorld model
     in changeWorld (world { wmap = pngMap }) model
+
+changeScreenSize :: (Int, Int) -> Model -> Model
+changeScreenSize newSize model =
+    let sx = fst newSize
+        sy = snd newSize
+        world = getWorld model
+    in changeWorld (world { size = (sx, sy) }) model
+
+changeControls :: [Control] -> Model -> Model
+changeControls newControls model =
+    let world = getWorld model
+    in makeModel world newControls
 
 addControl :: Control -> Model -> Model
 addControl control model =

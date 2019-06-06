@@ -49,11 +49,17 @@ processZoomChange f model = do
      in return $ changeZoom (f oldZoom) model
 
 
+processApiZoomChange :: Model -> IO Model
+processApiZoomChange model = do
+    let newModel = changeApiZoom model
+     in downloadAndEditModel newModel
+
+
 downloadAndEditModel :: Model -> IO Model
 downloadAndEditModel model =
     let dot = getDotPos model
         size = getScreenSize model
-        zoom = getZoom model
+        zoom = getApiZoom model
         partx = (fromIntegral (fst size)) / (2.0 ** (fromIntegral zoom))
         party = (fromIntegral (snd size)) / (2.0 ** (fromIntegral zoom))
         movementX = (fromIntegral $ fst size) / 2 + (fst dot)

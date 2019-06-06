@@ -113,7 +113,7 @@ guiCreateControls model =
                  , cw = 25
                  , ch = 25
                  , img = GGG.png "res/controls/enter.PNG"
-                 , action = downloadAndEditModel
+                 , action = processApiZoomChange
                  }
        allControls = [btnTemp, btnWind, btnPrec, btnClou, btnPres, btnZoomIn, btnZoomOut, btnZoom]
    in foldr addControl model allControls

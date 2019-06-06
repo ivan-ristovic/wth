@@ -21,6 +21,8 @@ module Model ( Control(..)
              , getScreenSize
              , changeScreenSize
              , getWindowPosition
+             , getApiZoom
+             , changeApiZoom
              ) where
 
 import Codec.Picture.Types
@@ -44,6 +46,7 @@ data World = World
              { x    :: Float
              , y    :: Float
              , z    :: Int
+             , apiZ :: Int
              , l    :: Api.Layer
              , bg   :: G.Picture
              , wmap :: G.Picture
@@ -76,6 +79,7 @@ defaultModel =
                { x = 0
                , y = 0
                , z = 0
+               , apiZ = 0
                , l = Api.Temperature
                , bg = GG.png Api.bgMapPath
                , wmap = G.Blank
@@ -110,6 +114,11 @@ getZoom model =
     let world = getWorld model
     in z world
 
+getApiZoom :: Model -> Int
+getApiZoom model =
+    let world = getWorld model
+    in apiZ world
+
 getLayer :: Model -> Api.Layer
 getLayer model =
     let world = getWorld model
@@ -123,14 +132,19 @@ getMap model =
 getBackground :: Model -> G.Picture
 getBackground model =
     let world = getWorld model
-        sx = 1.0 / (8 + (fromIntegral $ z world));
-        sy = sx
-    in G.scale sx sy $ bg world
+        s = 1 / 8 * (2 ** (fromIntegral $ apiZ world))
+    in G.scale s s $ bg world
 
 changeDotPos :: (Float, Float) -> Model -> Model
 changeDotPos pos model =
     let world = getWorld model
     in changeWorld (world { x = fst pos, y = snd pos }) model
+
+changeApiZoom :: Model -> Model
+changeApiZoom model =
+    let world = getWorld model
+        zoom  = getZoom model
+    in changeWorld (world { apiZ = zoom }) model
 
 changeZoom :: Int -> Model -> Model
 changeZoom zNew model =

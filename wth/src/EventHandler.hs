@@ -45,39 +45,31 @@ processLayerChange layer size model = do
 
 processZoomChange :: (Int -> Int) -> Model -> IO Model
 processZoomChange f model = do
-     Log.dbg $ "zoom: " ++ (show (getZoom model))
-     Log.dbg $ "api zoom: " ++ (show (getApiZoom model))
      let oldZoom = getZoom model
       in return $ changeZoom (f oldZoom) model
-
-
-processApiZoomChange :: Model -> IO Model
-processApiZoomChange model = do
-    let newModel = changeApiZoom model
-     in downloadAndEditModel newModel
 
 
 downloadAndEditModel :: Model -> IO Model
 downloadAndEditModel model =
     let dot = getDotPos model
         size = getScreenSize model
-        zoom = getApiZoom model
+        zoom = getZoom model
         partx = (fromIntegral (fst size)) / (2.0 ** (fromIntegral zoom))
         party = (fromIntegral (snd size)) / (2.0 ** (fromIntegral zoom))
         movementX = (fromIntegral $ fst size) / 2 + (fst dot)
         movementY = (fromIntegral $ snd size) / 2 - (snd dot)
         tilex = (floor (movementX / partx))
         tiley = (floor (movementY / party))
-        layer = getLayer model
+        newModel = changeTileCoordinates (tilex, tiley) model
+        t = getTileCoordinates newModel
+        layer = getLayer newModel
+        newModel2 = changeApiZoom newModel
      in do
-        Log.dbg $ "tilex: " ++ (show tilex)
-        Log.dbg $ "tiley: " ++ (show tiley)
-        Log.dbg $ "zoom: " ++ (show (getZoom model))
-        Log.dbg $ "api zoom: " ++ (show (getApiZoom model))
-        url        <- Api.formApiUrl layer zoom tilex tiley
+        url        <- Api.formApiUrl layer (getApiZoom newModel2) (fst t) (snd t)
         Log.dbg $ "Downloading: " ++ url
         downloaded <- Api.downloadMap url
         Log.dbg "Download complete"
+        Log.dbg "--------"
         case downloaded of Left err  -> do Log.err err
                                            return model
-                           Right img -> return $ changeMap img model
+                           Right img -> return $ changeMap img newModel2

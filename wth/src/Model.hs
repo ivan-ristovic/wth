@@ -16,12 +16,14 @@ module Model ( Control(..)
              , changeZoom
              , changeLayer
              , changeMap
+             , changeTileCoordinates
              , changeControls
              , addControl
              , getScreenSize
              , changeScreenSize
              , getWindowPosition
              , getApiZoom
+             , getTileCoordinates
              , changeApiZoom
              ) where
 
@@ -48,6 +50,8 @@ data World = World
              , z    :: Int
              , apiZ :: Int
              , l    :: Api.Layer
+             , tx   :: Int
+             , ty   :: Int
              , bg   :: G.Picture
              , wmap :: G.Picture
              , size :: ScreenSize
@@ -55,10 +59,10 @@ data World = World
              }
 
 type Model = (World, [Control])
-
 type ScreenSize = (Int, Int)
-
 type WindowPosition = (Int, Int)
+type TileCoordinates = (Int, Int)
+
 
 getWorld :: Model -> World
 getWorld = fst
@@ -81,6 +85,8 @@ defaultModel =
                , z = 0
                , apiZ = 0
                , l = Api.Temperature
+               , tx = 0
+               , ty = 0
                , bg = GG.png Api.bgMapPath
                , wmap = G.Blank
                , size = (512, 512)
@@ -134,6 +140,18 @@ getBackground model =
     let world = getWorld model
         s = 1 / 8 * (2 ** (fromIntegral $ apiZ world))
     in G.scale s s $ bg world
+
+getTileCoordinates :: Model -> TileCoordinates
+getTileCoordinates model =
+    let world = getWorld model
+    in (tx world, ty world)
+
+changeTileCoordinates :: TileCoordinates -> Model -> Model
+changeTileCoordinates (x, y) model =
+    let world = getWorld model
+        newTx = (tx world) * round (2 ** (fromIntegral $ z world)) + x
+        newTy = (ty world) * round (2 ** (fromIntegral $ z world)) + y
+    in changeWorld (world { tx = newTx , ty = newTy }) model
 
 changeDotPos :: (Float, Float) -> Model -> Model
 changeDotPos pos model =

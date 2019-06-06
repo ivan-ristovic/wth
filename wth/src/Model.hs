@@ -144,12 +144,13 @@ changeApiZoom :: Model -> Model
 changeApiZoom model =
     let world = getWorld model
         zoom  = getZoom model
-    in changeWorld (world { apiZ = zoom }) model
+        aZ    = getApiZoom model
+    in changeWorld (world { apiZ = max (aZ + zoom) 0, z = 0 }) model
 
 changeZoom :: Int -> Model -> Model
 changeZoom zNew model =
     let world = getWorld model
-    in changeWorld (world { z = if zNew < 0 then 0 else zNew }) model
+    in changeWorld (world { z = zNew }) model
 
 changeLayer :: Api.Layer -> Model -> Model
 changeLayer lNew model =

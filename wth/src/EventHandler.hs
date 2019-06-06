@@ -45,8 +45,10 @@ processLayerChange layer size model = do
 
 processZoomChange :: (Int -> Int) -> Model -> IO Model
 processZoomChange f model = do
-    let oldZoom = getZoom model
-     in return $ changeZoom (f oldZoom) model
+     Log.dbg $ "zoom: " ++ (show (getZoom model))
+     Log.dbg $ "api zoom: " ++ (show (getApiZoom model))
+     let oldZoom = getZoom model
+      in return $ changeZoom (f oldZoom) model
 
 
 processApiZoomChange :: Model -> IO Model
@@ -70,6 +72,8 @@ downloadAndEditModel model =
      in do
         Log.dbg $ "tilex: " ++ (show tilex)
         Log.dbg $ "tiley: " ++ (show tiley)
+        Log.dbg $ "zoom: " ++ (show (getZoom model))
+        Log.dbg $ "api zoom: " ++ (show (getApiZoom model))
         url        <- Api.formApiUrl layer zoom tilex tiley
         Log.dbg $ "Downloading: " ++ url
         downloaded <- Api.downloadMap url

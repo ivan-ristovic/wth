@@ -46,11 +46,12 @@ downloadAndEditModel model =
     let dot = getDotPos model
         size = getScreenSize model
         zoom = getZoom model
-        part = (fromIntegral (fst size)) / ((fromIntegral zoom) + 1)
+        partx = (fromIntegral (fst size)) / ((fromIntegral zoom) + 1)
+        party = (fromIntegral (snd size)) / ((fromIntegral zoom) + 1)
         movementX = (fromIntegral $ fst size) / 2 + (fst dot)
         movementY = (fromIntegral $ snd size) / 2 - (snd dot)
-        tilex = (floor (movementY / part))
-        tiley = (floor (movementX / part))
+        tilex = (floor (movementX / partx))
+        tiley = (floor (movementY / party))
         layer = getLayer model
      in do
         Log.dbg $ "tilex: " ++ (show tilex)

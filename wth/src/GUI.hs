@@ -26,7 +26,11 @@ view :: Model -> IO G.Picture
 view model =
     let controlImages    = map drawControl $ getControls model
         grid             = drawGrid (getScreenSize model) (getZoom model + 1)
-        backgroundImages = [getBackground model, getMap model, grid]
+        screen           = getScreenSize model
+        sx               = (/) (fromIntegral $ fst screen) 256.0
+        sy               = (/) (fromIntegral $ snd screen) 256.0
+        wmap             = G.scale sx sy $ getMap model
+        backgroundImages = [getBackground model, wmap, grid]
     in return $ G.pictures (backgroundImages ++ controlImages ++ [drawPointerAt (getDotPos model)])
 
 

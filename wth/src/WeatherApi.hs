@@ -25,11 +25,11 @@ formApiUrl :: Layer -> Int -> Int -> Int -> IO String
 formApiUrl layer zoom tilex tiley = do
     token <- readFile "token.txt"
     let tok = Txt.unpack $ Txt.strip $ Txt.pack token
-    let layerStr = layerToStrInternal layer
-    let zStr = show zoom
-    let xStr = show tilex
-    let yStr = show tilex
-    let baseUrl = "https://tile.openweathermap.org/map/"
+        layerStr = layerToStrInternal layer
+        zStr = show zoom
+        xStr = show tilex
+        yStr = show tiley
+        baseUrl = "https://tile.openweathermap.org/map/"
     return (baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ ".png?appid=" ++ tok)
 
 
@@ -38,11 +38,11 @@ formApiQuery :: Layer -> Int -> Int -> Int -> [(String, String)] -> IO String
 formApiQuery layer zoom tilex tiley params = do
     token <- readFile "token2.txt"
     let layerStr = layerToStrInternal layer
-    let zStr = show zoom
-    let xStr = show tilex
-    let yStr = show tilex
-    let baseUrl = "https://maps.openweathermap.org/maps/2.0/weather/"
-    let ps = foldl (++) "" $ map (\p -> "&" ++ (fst p) ++ "=" ++ (snd p)) params
+        zStr = show zoom
+        xStr = show tilex
+        yStr = show tiley
+        baseUrl = "https://maps.openweathermap.org/maps/2.0/weather/"
+        ps = foldl (++) "" $ map (\p -> "&" ++ (fst p) ++ "=" ++ (snd p)) params
     return (baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ "/?appid=" ++ token ++ ps)
 
 

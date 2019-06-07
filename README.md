@@ -3,8 +3,8 @@
 Functional Programming Course faculty project repository. Any similarities with existing abbreviations are totally coincidental!
 
 Created by:
-- [Ana Bajić](https://github.com/ivan-ristovic/)
-- [Ivan Ristović](https://github.com/Pljosan/)
+- [Ana Bajić](https://github.com/Pljosan/)
+- [Ivan Ristović](https://github.com/ivan-ristovic/)
 - [Strahinja Stanojević](https://github.com/filozof50/)
 
 ![showoff1](images/showoff1.PNG)

@@ -145,7 +145,7 @@ updateTileCoordinates (x, y) model =
     let world     = getWorld model
         zoom      = z world
         zPos t t' = t * round (2 ** (fromIntegral $ z world)) + t'
-        zNeg t    = div t (apiZ world)
+        zNeg t    = div t 2
         newTx     = if zoom >= 0 then zPos (tx world) x else zNeg (tx world)
         newTy     = if zoom >= 0 then zPos (ty world) y else zNeg (ty world)
     in changeWorld (world { tx = newTx , ty = newTy }) model

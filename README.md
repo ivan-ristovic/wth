@@ -9,4 +9,4 @@ Functional Programming Course faculty project repository. Any similarities with 
 
 ### Q: What the hell is this? (no pun intended)
 
-
+This is an application that uses open source APIs ([OpenWeatherMap](https://openweathermap.org/api/weathermaps), [CartoCDN](https://github.com/CartoDB/basemap-styles) to show weather information.

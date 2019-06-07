@@ -134,8 +134,12 @@ getMap model =
 getBackground :: Model -> G.Picture
 getBackground model =
     let world = getWorld model
-        s = 1 / 8 * (2 ** (fromIntegral $ apiZ world))
-    in G.scale s s $ bg world
+        s = 1 / 4 * (2 ** (fromIntegral $ apiZ world))
+        (tx, ty) = getTileCoordinates model
+        (wx, wy) = getScreenSize model
+        dx       = (fromIntegral $ wx * tx) 
+        dy       = (fromIntegral $ wy * ty)
+    in G.translate dx dy $ G.scale s s $ bg world
 
 getTileCoordinates :: Model -> TileCoordinates
 getTileCoordinates model =

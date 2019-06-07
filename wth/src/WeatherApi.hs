@@ -39,7 +39,7 @@ formBackgroundMapUrl zoom tilex tiley =
         xStr = show tilex
         yStr = show tiley
         baseUrl = "https://c.basemaps.cartocdn.com/light_all/"
-     in return $ baseUrl ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ "@25x.png"
+     in return $ baseUrl ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ "@2x.png"
 
 
 -- https://openweathermap.org/api/weather-map-2  (prolly wont be used since we are poor)

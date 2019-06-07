@@ -132,7 +132,7 @@ getMap model =
         sx             = (/) (fromIntegral sizex) 256.0
         sy             = (/) (fromIntegral sizey) 256.0
         layerScaled    = G.scale sx sy $ picLayer world
-        bgScaled       = G.scale 0.25 0.25 $ picBg world
+        bgScaled       = picBg world --G.scale (sx / 2.0) (sy / 2.0) $ picBg world
     in G.pictures [bgScaled, layerScaled]
 
 getTileCoordinates :: Model -> TileCoordinates

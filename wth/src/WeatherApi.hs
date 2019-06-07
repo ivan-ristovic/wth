@@ -21,8 +21,8 @@ layerToStrInternal layer = case layer of Temperature   -> "temp_new"
 
 
 -- https://openweathermap.org/api/weathermaps
-formApiUrl :: Layer -> Int -> Int -> Int -> IO String
-formApiUrl layer zoom tilex tiley = do
+formWeatherLayerUrl :: Layer -> Int -> Int -> Int -> IO String
+formWeatherLayerUrl layer zoom tilex tiley = do
     token <- readFile "token.txt"
     let tok = Txt.unpack $ Txt.strip $ Txt.pack token
         layerStr = layerToStrInternal layer
@@ -30,7 +30,16 @@ formApiUrl layer zoom tilex tiley = do
         xStr = show tilex
         yStr = show tiley
         baseUrl = "https://tile.openweathermap.org/map/"
-    return (baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ ".png?appid=" ++ tok)
+    return $ baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ ".png?appid=" ++ tok
+
+
+formBackgroundMapUrl :: Int -> Int -> Int -> IO String
+formBackgroundMapUrl zoom tilex tiley = 
+    let zStr = show zoom
+        xStr = show tilex
+        yStr = show tiley
+        baseUrl = "https://c.basemaps.cartocdn.com/light_all/"
+     in return $ baseUrl ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ "@25x.png"
 
 
 -- https://openweathermap.org/api/weather-map-2  (prolly wont be used since we are poor)
@@ -43,11 +52,11 @@ formApiQuery layer zoom tilex tiley params = do
         yStr = show tiley
         baseUrl = "https://maps.openweathermap.org/maps/2.0/weather/"
         ps = foldl (++) "" $ map (\p -> "&" ++ (fst p) ++ "=" ++ (snd p)) params
-    return (baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ "/?appid=" ++ token ++ ps)
+    return $ baseUrl ++ layerStr ++ "/" ++ zStr ++ "/" ++ xStr ++ "/" ++ yStr ++ "/?appid=" ++ token ++ ps
 
 
-downloadMap :: String -> IO (Either String DynamicImage)
-downloadMap mapUrl = do
+downloadImage :: String -> IO (Either String DynamicImage)
+downloadImage mapUrl = do
     response <- openURI mapUrl
     case response of
         Left  err -> return (Left err)

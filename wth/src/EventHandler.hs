@@ -1,6 +1,7 @@
 module EventHandler where
 
 import Model
+import Codec.Picture.Types
 import qualified Logger as Log
 import qualified WeatherApi as Api
 import qualified Graphics.Gloss as G
@@ -40,7 +41,7 @@ processEvent _ model = return model
 processLayerChange :: Api.Layer -> Model -> IO Model
 processLayerChange layer model = 
     let model' = changeLayer layer model
-     in downloadAndEditModel model'
+     in downloadAndEditLayerImage model'
 
 
 processZoomIncrease :: Model -> IO Model
@@ -55,9 +56,9 @@ processZoomDecrease model =
         model'   = changeZoom (oldZoom - 1)     model
         model''  = updateTileCoordinates (0, 0) model'
         model''' = changeApiZoom                model''
-     in downloadAndEditModel model'''
+     in downloadAndEditLayerImage model'''
 
-     
+
 processZoomActivation :: Model -> IO Model
 processZoomActivation model =
     let dot       = getDotPos model
@@ -71,19 +72,30 @@ processZoomActivation model =
         tiley     = (floor (movementY / party))
         newModel  = updateTileCoordinates (tilex, tiley) model
         newModel' = changeApiZoom newModel
-     in downloadAndEditModel newModel'
+     in downloadAndEditLayerImage newModel'
 
 
-downloadAndEditModel :: Model -> IO Model
-downloadAndEditModel model =
-     let az       = getApiZoom         model
-         layer    = getLayer           model
-         (tx, ty) = getTileCoordinates model
+downloadAndEditLayerImage :: Model -> IO Model
+downloadAndEditLayerImage model =
+    let az       = getApiZoom         model
+        layer    = getLayer           model
+        (tx, ty) = getTileCoordinates model
      in do
-        url        <- Api.formApiUrl (layer) az tx ty
-        Log.dbg $ "Downloading: " ++ url
-        downloaded <- Api.downloadMap url
+        layerUrl   <- Api.formWeatherLayerUrl (layer) az tx ty
+        mapUrl     <- Api.formBackgroundMapUrl az tx ty
+        Log.dbg $ "Downloading layer: " ++ layerUrl
+        dlLayer    <- Api.downloadImage layerUrl
+        Log.dbg $ "Downloading map: " ++ mapUrl
+        dlBg       <- Api.downloadImage mapUrl
         Log.dbg "Download complete"
-        case downloaded of Left err  -> do Log.err err
-                                           return model
-                           Right img -> return $ changeMap img model
+        processDownloadedImages model dlLayer dlBg
+
+
+processDownloadedImages :: Model -> Either String DynamicImage -> Either String DynamicImage -> IO Model
+processDownloadedImages model (Right layerImg) (Right bgImg) =
+    return $ changeImages layerImg bgImg model 
+
+processDownloadedImages model (Left err) _ = do Log.err err 
+                                                return model
+processDownloadedImages model _ (Left err) = do Log.err err 
+                                                return model

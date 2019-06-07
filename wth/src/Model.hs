@@ -11,7 +11,6 @@ module Model ( Control(..)
              , getApiZoom
              , getLayer
              , getMap
-             , getBackground
              , getScreenSize
              , getWindowPosition
              , getTileCoordinates
@@ -23,7 +22,7 @@ module Model ( Control(..)
              , changeZoom
              , changeApiZoom
              , changeLayer
-             , changeMap
+             , changeImages
              , changeScreenSize
              ) where
 
@@ -52,8 +51,8 @@ data World = World
              , l    :: Api.Layer
              , tx   :: Int
              , ty   :: Int
-             , bg   :: G.Picture
-             , wmap :: G.Picture
+             , picBg   :: G.Picture
+             , picLayer :: G.Picture
              , size :: ScreenSize
              , position :: WindowPosition
              }
@@ -86,8 +85,8 @@ defaultModel =
                , l = Api.Temperature
                , tx = 0
                , ty = 0
-               , bg = GG.png Api.bgMapPath
-               , wmap = G.Blank
+               , picBg = GG.png Api.bgMapPath
+               , picLayer = G.Blank
                , size = (512, 512)
                , position = (100, 100)
                }
@@ -128,18 +127,13 @@ getLayer model =
 
 getMap :: Model -> G.Picture
 getMap model =
-    let world = getWorld model
-    in wmap world
-
-getBackground :: Model -> G.Picture
-getBackground model =
-    let world = getWorld model
-        s = 1 / 4 * (2 ** (fromIntegral $ apiZ world))
-        (tx, ty) = getTileCoordinates model
-        (wx, wy) = getScreenSize model
-        dx       = (fromIntegral $ wx * tx) 
-        dy       = (fromIntegral $ wy * ty)
-    in G.translate dx dy $ G.scale s s $ bg world
+    let world          = getWorld model
+        (sizex, sizey) = size world
+        sx             = (/) (fromIntegral sizex) 256.0
+        sy             = (/) (fromIntegral sizey) 256.0
+        layerScaled    = G.scale sx sy $ picLayer world
+        bgScaled       = G.scale 0.25 0.25 $ picBg world
+    in G.pictures [bgScaled, layerScaled]
 
 getTileCoordinates :: Model -> TileCoordinates
 getTileCoordinates model =
@@ -178,12 +172,14 @@ changeLayer lNew model =
     let world = getWorld model
     in changeWorld (world { l = lNew }) model
 
-changeMap :: DynamicImage -> Model -> Model
-changeMap img model =
-    let pngMap = case GJ.fromDynamicImage img of Nothing  -> G.Blank
-                                                 Just png -> png
+changeImages :: DynamicImage -> DynamicImage -> Model -> Model
+changeImages layerImg bgImg model =
+    let layerPng = case GJ.fromDynamicImage layerImg of Nothing  -> G.Blank
+                                                        Just png -> png
+        bgPng    = case GJ.fromDynamicImage bgImg of Nothing  -> G.Blank
+                                                     Just png -> png
         world  = getWorld model
-    in changeWorld (world { wmap = pngMap }) model
+    in changeWorld (world { picLayer = layerPng, picBg = bgPng }) model
 
 changeScreenSize :: (Int, Int) -> Model -> Model
 changeScreenSize newSize model =

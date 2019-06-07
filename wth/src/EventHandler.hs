@@ -37,63 +37,53 @@ processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) mod
 processEvent _ model = return model
 
 
-processLayerChange :: Api.Layer -> (Int, Int) -> Model -> IO Model
-processLayerChange layer size model = do
-    let dot = getDotPos model
-        size = getScreenSize model
-        zoom = getZoom model
-        partx = (fromIntegral (fst size)) / (2.0 ** (fromIntegral zoom))
-        party = (fromIntegral (snd size)) / (2.0 ** (fromIntegral zoom))
-        movementX = (fromIntegral $ fst size) / 2 + (fst dot)
-        movementY = (fromIntegral $ snd size) / 2 - (snd dot)
-        tilex = (floor (movementX / partx))
-        tiley = (floor (movementY / party))
-        newModel = changeTileCoordinates (tilex, tiley) model
-        t = getTileCoordinates newModel
-        newModel2 = changeLayer layer newModel
-     in downloadAndEditModel newModel2
+processLayerChange :: Api.Layer -> Model -> IO Model
+processLayerChange layer model = 
+    let model' = changeLayer layer model
+     in downloadAndEditModel model'
 
 
 processZoomIncrease :: Model -> IO Model
-processZoomIncrease model = do
+processZoomIncrease model = 
     let oldZoom = getZoom model
      in return $ changeZoom (oldZoom + 1) model
 
 
 processZoomDecrease :: Model -> IO Model
-processZoomDecrease model = do
-    let oldZoom = getZoom model
-        newModel = changeZoom (oldZoom - 1) model
-        newModel' = changeApiZoom newModel
-        newModel'' = changeTileCoordinates (0, 0) newModel'
-     in downloadAndEditModel newModel''
+processZoomDecrease model = 
+    let oldZoom  = getZoom                      model
+        model'   = changeZoom (oldZoom - 1)     model
+        model''  = updateTileCoordinates (0, 0) model'
+        model''' = changeApiZoom                model''
+     in downloadAndEditModel model'''
 
+     
 processZoomActivation :: Model -> IO Model
 processZoomActivation model =
-    let dot = getDotPos model
-        size = getScreenSize model
-        zoom = getZoom model
-        partx = (fromIntegral (fst size)) / (2.0 ** (fromIntegral zoom))
-        party = (fromIntegral (snd size)) / (2.0 ** (fromIntegral zoom))
+    let dot       = getDotPos model
+        size      = getScreenSize model
+        zoom      = getZoom model
+        partx     = (fromIntegral (fst size)) / (2.0 ** (fromIntegral zoom))
+        party     = (fromIntegral (snd size)) / (2.0 ** (fromIntegral zoom))
         movementX = (fromIntegral $ fst size) / 2 + (fst dot)
         movementY = (fromIntegral $ snd size) / 2 - (snd dot)
-        tilex = (floor (movementX / partx))
-        tiley = (floor (movementY / party))
-        newModel = changeTileCoordinates (tilex, tiley) model
+        tilex     = (floor (movementX / partx))
+        tiley     = (floor (movementY / party))
+        newModel  = updateTileCoordinates (tilex, tiley) model
         newModel' = changeApiZoom newModel
      in downloadAndEditModel newModel'
 
 
 downloadAndEditModel :: Model -> IO Model
 downloadAndEditModel model =
-     let t = getTileCoordinates model
-         layer = getLayer model
+     let az       = getApiZoom         model
+         layer    = getLayer           model
+         (tx, ty) = getTileCoordinates model
      in do
-        url        <- Api.formApiUrl layer (getApiZoom model) (fst t) (snd t)
+        url        <- Api.formApiUrl (layer) az tx ty
         Log.dbg $ "Downloading: " ++ url
         downloaded <- Api.downloadMap url
         Log.dbg "Download complete"
-        Log.dbg "--------"
         case downloaded of Left err  -> do Log.err err
                                            return model
                            Right img -> return $ changeMap img model

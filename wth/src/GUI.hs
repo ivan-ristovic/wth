@@ -10,17 +10,6 @@ import qualified Graphics.Gloss.Game as GGG
 import qualified Graphics.Gloss.Interface.IO.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
 
-import Debug.Trace
-
-
--- windowSize :: (Int, Int)
--- windowSize = (512, 512)
-
--- windowPos :: (Int, Int)
--- windowPos = (10, 10)
-
-background :: G.Color
-background = G.white
 
 view :: Model -> IO G.Picture
 view model =
@@ -35,7 +24,8 @@ view model =
 
 
 guiDisplay :: Model -> GG.Display
-guiDisplay model = GG.InWindow "wth" (getScreenSize model) $ getWindowPosition model
+guiDisplay model = GG.InWindow "wth" 
+                               (getScreenSize model) (getWindowPosition model)
 
 
 guiCreateControls :: Model -> Model
@@ -50,7 +40,7 @@ guiCreateControls model =
                  , cw = 25
                  , ch = 25
                  , img = GGG.png "res/controls/temp.PNG"
-                 , action = processLayerChange Api.Temperature $ getScreenSize model
+                 , action = processLayerChange Api.Temperature
                  }
        btnWind = Control
                  { guid = 0
@@ -59,7 +49,7 @@ guiCreateControls model =
                  , cw = 25
                  , ch = 25
                  , img = GGG.png "res/controls/wind.PNG"
-                 , action = processLayerChange Api.WindSpeed $ getScreenSize model
+                 , action = processLayerChange Api.WindSpeed
                  }
        btnPrec = Control
                  { guid = 0
@@ -68,7 +58,7 @@ guiCreateControls model =
                  , cw = 25
                  , ch = 25
                  , img = GGG.png "res/controls/prec.PNG"
-                 , action = processLayerChange Api.Precipitation $ getScreenSize model
+                 , action = processLayerChange Api.Precipitation
                  }
        btnClou = Control
                  { guid = 0
@@ -77,7 +67,7 @@ guiCreateControls model =
                  , cw = 25
                  , ch = 25
                  , img = GGG.png "res/controls/clou.PNG"
-                 , action = processLayerChange Api.Clouds $ getScreenSize model
+                 , action = processLayerChange Api.Clouds
                  }
        btnPres = Control
                  { guid = 0
@@ -86,7 +76,7 @@ guiCreateControls model =
                  , cw = 25
                  , ch = 25
                  , img = GGG.png "res/controls/pres.PNG"
-                 , action = processLayerChange Api.Pressure $ getScreenSize model
+                 , action = processLayerChange Api.Pressure
                  }
        btnZoomIn = Control
                    { guid = 0

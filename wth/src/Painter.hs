@@ -6,6 +6,10 @@ import qualified Graphics.Gloss.Interface.IO.Game as GG
 import qualified Graphics.Gloss.Juicy as GJ
 
 
+backgroundColor :: G.Color
+backgroundColor = G.white
+
+
 drawPointerAt :: (Float, Float) -> G.Picture
 drawPointerAt (x, y) = G.translate x y $ G.color G.red $ GG.circleSolid 3
 

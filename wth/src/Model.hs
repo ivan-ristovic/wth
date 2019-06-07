@@ -2,29 +2,29 @@ module Model ( Control(..)
              , World(..)
              , Model(..)
              , defaultModel
+             , makeModel
              , getWorld
              , getControls
-             , makeModel
              , changeWorld
              , getDotPos
              , getZoom
+             , getApiZoom
              , getLayer
              , getMap
              , getBackground
+             , getScreenSize
+             , getWindowPosition
+             , getTileCoordinates
              , updateModel
+             , updateTileCoordinates
+             , addControl
+             , changeControls
              , changeDotPos
              , changeZoom
+             , changeApiZoom
              , changeLayer
              , changeMap
-             , changeTileCoordinates
-             , changeControls
-             , addControl
-             , getScreenSize
              , changeScreenSize
-             , getWindowPosition
-             , getApiZoom
-             , getTileCoordinates
-             , changeApiZoom
              ) where
 
 import Codec.Picture.Types
@@ -76,7 +76,6 @@ makeModel world controls = (world, controls)
 changeWorld :: World -> Model -> Model
 changeWorld world model = makeModel world (getControls model)
 
-
 defaultModel :: Model
 defaultModel =
     let world = World
@@ -92,13 +91,10 @@ defaultModel =
                , size = (512, 512)
                , position = (100, 100)
                }
-    in (world, [])
+    in makeModel world []
 
 updateModel :: Float -> Model -> IO Model
-updateModel _ model = do
-    -- Log.debug "Updating model"
-    -- Log.dbg $ show GA.getScreenSize
-    return model
+updateModel _ model = return model
 
 getScreenSize :: Model -> ScreenSize
 getScreenSize model =
@@ -146,14 +142,14 @@ getTileCoordinates model =
     let world = getWorld model
     in (tx world, ty world)
 
-changeTileCoordinates :: TileCoordinates -> Model -> Model
-changeTileCoordinates (x, y) model =
-    let world = getWorld model
-        zoom = z world
+updateTileCoordinates :: TileCoordinates -> Model -> Model
+updateTileCoordinates (x, y) model =
+    let world     = getWorld model
+        zoom      = z world
         zPos t t' = t * round (2 ** (fromIntegral $ z world)) + t'
         zNeg t    = div t (apiZ world)
-        newTx = if zoom > 0 then zPos (tx world) x else zNeg (tx world)
-        newTy = if zoom > 0 then zPos (ty world) y else zNeg (ty world)
+        newTx     = if zoom >= 0 then zPos (tx world) x else zNeg (tx world)
+        newTy     = if zoom >= 0 then zPos (ty world) y else zNeg (ty world)
     in changeWorld (world { tx = newTx , ty = newTy }) model
 
 changeDotPos :: (Float, Float) -> Model -> Model

@@ -56,7 +56,8 @@ processZoomDecrease model =
         model'   = changeZoom (oldZoom - 1)     model
         model''  = updateTileCoordinates (0, 0) model'
         model''' = changeApiZoom                model''
-     in downloadAndEditLayerImage model'''
+     in if (oldZoom > 0) then return model'
+                         else downloadAndEditLayerImage model'''
 
 
 processZoomActivation :: Model -> IO Model

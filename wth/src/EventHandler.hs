@@ -37,21 +37,21 @@ processEvent (GG.EventKey (GG.MouseButton GG.LeftButton) GG.Down _ (nx, ny)) mod
                                   else (action (head activatedControls)) model
 processEvent _ model = return model
 
-
 processLayerChange :: Api.Layer -> Model -> IO Model
-processLayerChange layer model = 
+processLayerChange layer model =
     let model' = changeLayer layer model
      in downloadAndEditLayerImage model'
 
 
+
 processZoomIncrease :: Model -> IO Model
-processZoomIncrease model = 
+processZoomIncrease model =
     let oldZoom = getZoom model
      in return $ changeZoom (oldZoom + 1) model
 
 
 processZoomDecrease :: Model -> IO Model
-processZoomDecrease model = 
+processZoomDecrease model =
     let oldZoom  = getZoom                      model
         model'   = changeZoom (oldZoom - 1)     model
         model''  = updateTileCoordinates (0, 0) model'
@@ -72,7 +72,8 @@ processZoomActivation model =
         tiley     = (floor (movementY / party))
         newModel  = updateTileCoordinates (tilex, tiley) model
         newModel' = changeApiZoom newModel
-     in downloadAndEditLayerImage newModel'
+        newModel'' = changeDotPos (0, 0) newModel'
+     in downloadAndEditLayerImage newModel''
 
 
 downloadAndEditLayerImage :: Model -> IO Model
@@ -93,9 +94,9 @@ downloadAndEditLayerImage model =
 
 processDownloadedImages :: Model -> Either String DynamicImage -> Either String DynamicImage -> IO Model
 processDownloadedImages model (Right layerImg) (Right bgImg) =
-    return $ changeImages layerImg bgImg model 
+    return $ changeImages layerImg bgImg model
 
-processDownloadedImages model (Left err) _ = do Log.err err 
+processDownloadedImages model (Left err) _ = do Log.err err
                                                 return model
-processDownloadedImages model _ (Left err) = do Log.err err 
+processDownloadedImages model _ (Left err) = do Log.err err
                                                 return model

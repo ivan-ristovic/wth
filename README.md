@@ -1,6 +1,6 @@
 # Weather Tiles in Haskell
 
-Functional Programming Course faculty project repository. Any similarities with existing abbreviations are totally coincidental!
+Functional Programming Course project that performs weather queries and visually displays the retrieved data. Written in Haskell using Gloss graphics library. Any similarities with existing abbreviations are totally coincidental!
 
 Created by:
 - [Ana Bajić](https://github.com/Pljosan/)
